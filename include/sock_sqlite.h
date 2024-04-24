@@ -10,19 +10,19 @@
  *      ChangeLog:  1, Release initial version on "17/04/24 14:34:29"
  *                 
  ********************************************************************************/
+#include"socket.h"
 
 
-extern sqlite3	*db;
 
 /* Description : create database.db and create table to store data */
 
 
- int dev_sqlite3();
+ int open_sqlite3();
 
 
 /* Description : Inserting structure data into the database */
 
-int insert_data(struct DS18B20_DATA data);
+int insert_data(data_t data);
 
 /* Description : read data from database*/
 
@@ -35,3 +35,6 @@ int del_database(char *snd_buf);
 /* Description :  get total database rows*/
 
 int get_row();
+
+
+int close_database();

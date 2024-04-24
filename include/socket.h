@@ -13,7 +13,7 @@
 #ifndef  _SOCKET_H_
 #define  _SOCKET_H_
 
-struct DS18B20_DATA;
+#include"temp.h"
 
 
 
@@ -23,17 +23,12 @@ typedef struct socket_s
 	char		host[64];
 	int			cli_port;
 } socket_t;
-//socket_t			so;
-//socket_t			*my_socket = &so;
 
-int internet_connect(socket_t *my_socket);
+int sock_connect(socket_t *my_socket);
 
 
-int internet_write(struct DS18B20_DATA data, char *snd_buf,socket_t *my_socket);
+int sock_write(socket_t *my_socket,data_t data, char *snd_buf);
 
 
-int internet_read(socket_t *my_socket);
-
-
-int extract_data(char *snd_buf,socket_t *my_socket);
+int send_data(char *snd_buf,socket_t *my_socket);
 #endif   /*  ----- #ifndef _SOCKET_H_  ----- */ 

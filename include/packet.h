@@ -12,7 +12,7 @@
  ********************************************************************************/
 #ifndef		_PACKET_H_
 #define		_PACKET_H_
-
+#include"temp.h"
 
 /* Description : get the devices name */
 
@@ -24,6 +24,6 @@ char *get_time(char *now_time);
 
 /*Description : Packaging the temperature,device id and now time*/
 
-int assign_data(char dev_name[64], char *dev_time, float dev_temp,struct DS18B20_DATA *data);
+//int assign_data(char dev_name[64], char *dev_time, float dev_temp,struct data_t *data);
 
 #endif   /*  ----- #ifndef _PACKET_H_  ----- */ 

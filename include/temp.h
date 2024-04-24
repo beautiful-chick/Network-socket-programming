@@ -15,12 +15,12 @@
 
 
 
-struct DS18B20_DATA
+typedef struct ds18b20
 {
-	char            d_time[64];
+	char            *d_time;
 	float           d_temp;
 	char            d_name[64];
-};
+}data_t;
 
 
 /* Description : get the device temperature */
