@@ -36,13 +36,8 @@
 #include "temp.h"
 #include "packet.h"
 
-extern struct DS18B20_DATA data;
 
-
-socket_t 			my_socket;
-sqlite3				*db = NULL;
-
-
+int check_sample_time(time_t *last_time,int timeout);
 
 static inline void print_usage(char *progname)
 {
@@ -51,21 +46,39 @@ static inline void print_usage(char *progname)
 	printf("\nMandatory arguments to long options are mandatory for short options too:\n");
 	printf("-i[IP Address]\n");
 	printf("-p[Port]\n");
-	printf("-t[time]\n");
+	printf("-t[timeout]\n");
 	return ;
 }
+
+static inline void msleep(unsigned long ms)
+{
+	struct timespec cSleep;
+	unsigned long ulTmp;
+
+
+	cSleep.tv_sec = ms/1000;
+	if( cSleep.tv_sec == 0 )
+	{
+		ulTmp = ms*10000;
+		cSleep.tv_nsec = ulTmp*100;
+	}
+	else
+	{
+		cSleep.tv_nsec = 0;
+	}
+	nanosleep(&cSleep, 0);
+	return ;
+}
+
 
 
 int main(int argc, char **argv)
 {
 
 
-	int					timeout;
+	int					timeout = 60;
 	int					opt;
 	char				*progname = NULL;
-	float 				dev_temp;
-	char				dev_name[64];
-	char				*dev_time;
 	int					rv = -1;
 	int					rc;
 	float				temp;
@@ -79,14 +92,17 @@ int main(int argc, char **argv)
 	int					row;
 	double				time_diff;
 	char     	        snd_buf[1024] = {0};
-
-
+	data_t				data;
+	socket_t 			my_socket;
+	char				*send_buf;
 	progname = (char *)basename( argv[0] );
+
+
 	struct option		long_options[] = 
 	{
 		{"port", required_argument, NULL, 'p'},
 		{"IP Address", required_argument, NULL, 'i'},
-		{"time", required_argument, NULL, 't'},
+		{"timeout", required_argument, NULL, 't'},
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 
@@ -115,39 +131,37 @@ int main(int argc, char **argv)
 	}
 
 
-	dev_sqlite3();
+	open_sqlite3();
 
-	last_time = time(NULL);
+//	last_time = time(NULL);
 
 	while(1)
 	{
 		flag = 0;
-		now_time = time(NULL);
-		time_diff = difftime(now_time,last_time);
 
-		if( time_diff >= timeout)
+		if( check_sample_time(&last_time, timeout) )
 		{
 			printf("------------------Start get data--------------------\n");
-			if( get_temperature(&dev_temp) == 0 )
+			if( get_temperature(&data.d_temp) == 0 )
 			{
-				printf("Temperature:%.2f\n",dev_temp);
+				printf("Temperature:%.2f\n",data.d_temp);
 			}
 			else
 			{
 				printf("Temperature error:%s\n",strerror(errno));
 			}
-			if( (get_name(dev_name,sizeof(dev_name))) != 0 )
+			if( (get_name(data.d_name,sizeof(data.d_name))) != 0 )
 			{
 				printf("Get name error:%s\n",strerror(errno));
 			}
 			else
 			{
-				printf("dev_name:%s\n",dev_name);
+				printf("name:%s\n",data.d_name);
 			}
-			dev_time = get_time(NULL);
-			if( dev_time  != NULL )
+			data.d_time = get_time(NULL);
+			if( data.d_time  != NULL )
 			{
-				printf("Current time is:%s\n",dev_time);
+				printf("Current time is:%s\n",data.d_time);
 			}
 			else
 			{
@@ -155,32 +169,18 @@ int main(int argc, char **argv)
 			}
 
 
-			int m = assign_data(dev_name,dev_time,dev_temp,&data);
-			if( m != 0)
-			{
-				printf("assign_data error\n");
-			}
-			else
-			{
-				printf("assign_data ok\n");
-			}
-
 			last_time = now_time;
 			flag = 1;
-
-			ret = getsockopt(my_socket.conn_fd, IPPROTO_TCP, TCP_INFO, &optval, &optlen);
 		}
 		sleep(2);
 
 
 		ret = getsockopt(my_socket.conn_fd, IPPROTO_TCP, TCP_INFO, &optval, &optlen);
-		printf("ret:%d\n",ret);
+	
 
 		if( ret != 0 )
 		{
-			rv = internet_connect(&my_socket);
-
-
+			rv = sock_connect(&my_socket);
 			if( rv < 0 )
 			{
 				close(my_socket.conn_fd);
@@ -188,9 +188,10 @@ int main(int argc, char **argv)
 				if( flag == 1 )
 				{
 					insert_data(data);
-					continue;
 
 				}
+
+				continue;
 			}
 		}
 
@@ -198,15 +199,15 @@ int main(int argc, char **argv)
 		if( flag == 1 )
 		{
 			/* 发送当前采样的数据*/
-			rv1 = internet_write(data, snd_buf,&my_socket);
+			rv1 = sock_write(&my_socket,data,snd_buf);
 			printf("Send the data ok\n");
-			internet_read(&my_socket);
+			//internet_read(&my_socket);
 
 
 			/* 发送失败，将数据再存到数据库中*/
 			if( rv1 < 0 )
 			{
-				dev_sqlite3(data);
+				insert_data(data);
 				continue;
 			}
 		}
@@ -216,12 +217,40 @@ int main(int argc, char **argv)
 		if(row != 0)
 		{
 			/* 提取,发送一条数据*/
-			extract_data(snd_buf,&my_socket);
+			
+			send_buf = read_data();
+			
+			if(send_buf != NULL)
+				printf("Extract data ok\n");
+			else
+			{
+				printf("Error:%s\n",strerror(errno));
+			}
+			
+			send_data(send_buf,&my_socket);
+			
 			/* 删除一条数据*/
 			del_database(snd_buf);
-
 		}
+		msleep(5);
 	}
-	sqlite3_close(db);
+	close_database();
 	return 0;
+}
+
+
+
+
+int check_sample_time(time_t *last_time,int timeout)
+{
+	int 		time_sample = 0;
+	time_t		now;
+	time(&now);
+	if( difftime(now, *last_time) > timeout)
+	{
+		time_sample = 1;
+		*last_time = now;
+	}
+	return time_sample;
+
 }
