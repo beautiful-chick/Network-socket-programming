@@ -33,7 +33,7 @@
 
 
 
-int internet_connect(socket_t *my_socket)
+int sock_connect(socket_t *my_socket)
 {
 	struct sockaddr_in		serv_addr;
 
@@ -71,7 +71,7 @@ int internet_connect(socket_t *my_socket)
 
 
 
-int internet_write(struct DS18B20_DATA data, char *snd_buf,socket_t *my_socket)
+int sock_write(socket_t *my_socket,data_t data, char *snd_buf)
 {
 	snprintf(snd_buf, 2048, "%s,%s,%.2f", data.d_time, data.d_name, data.d_temp);
 	printf("internet_write snd_buf:%s\n", snd_buf);
@@ -88,43 +88,9 @@ int internet_write(struct DS18B20_DATA data, char *snd_buf,socket_t *my_socket)
 
 
 
-
-
-int internet_read(socket_t *my_socket)
+int send_data(char *snd_buf,socket_t *my_socket)
 {
-	char 			sock_buf[1024];
-	int				rv = -1;
-
-
-	memset(sock_buf, 0, sizeof(sock_buf));
-	rv = read(my_socket->conn_fd, sock_buf, sizeof(sock_buf));
-
-
-	if( rv < 0 )
-	{
-		printf("Read data from server failure : %s\n", strerror(errno));
-		close(my_socket->conn_fd);
-	}
-	else if( 0 == rv)
-	{
-		printf("Client connect to server failure : %s\n", strerror(errno));
-	}
-
-
-	printf("Read %d bytes data from server : '%s'\n", rv, sock_buf);
-	return 0;
-}
-
-
-
-
-
-
-int extract_data(char *snd_buf,socket_t *my_socket)
-{
-	snd_buf = read_data();
-
-	printf("In the extract_data() snd_buf:%s\n",snd_buf);
+	
 	write(my_socket->conn_fd, snd_buf, strlen(snd_buf));
 	return 0;
 }

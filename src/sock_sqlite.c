@@ -35,12 +35,11 @@
 #include"socket.h"
 #include"sock_sqlite.h"
 
-//extern DS18B20_DATA data;
-
-extern socket_t          *my_socket;
 
 
-int dev_sqlite3()
+static sqlite3			 *db = NULL;
+
+int open_sqlite3()
 {
 	int 		rc;
 	char 		*err_msg = 0;
@@ -77,7 +76,7 @@ int dev_sqlite3()
 
 
 
-int insert_data(struct DS18B20_DATA data)
+int insert_data(data_t data)
 {
 	char			*sql;
 	char			*err_msg = 0;
@@ -146,14 +145,7 @@ char  *read_data()
 }
 
 
-/*int extract_data(char *snd_buf)
-{
-	snd_buf = read_data();
 
-	printf("In the extract_data() snd_buf:%s\n",snd_buf);
-	write(my_socket->conn_fd, snd_buf, strlen(snd_buf));
-	return 0;
-}*/
 
 
 
@@ -222,5 +214,13 @@ int get_row()
 	sqlite3_finalize(stmt);
 	return row_count;	
 }
+
+
+int close_database()
+{
+	sqlite3_close(db);
+}
+
+
 
 

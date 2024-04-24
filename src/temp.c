@@ -21,9 +21,6 @@
 
 #include "temp.h"
 
-struct DS18B20_DATA data;
-
-
 float get_temperature(float *temp)
 {
 

@@ -27,8 +27,6 @@
 #include"temp.h"
 
 #include "packet.h"
-//#include"socket.h"
-//#include"sock_sqlite.h"
 int	get_name(char buf2[1024],size_t buf2_size)
 {
 	int				fd2;
@@ -121,7 +119,7 @@ char *get_time(char *now_time)
 
 
 
-int assign_data(char dev_name[64], char *dev_time, float dev_temp,struct DS18B20_DATA *data)
+/*int assign_data(char dev_name[64], char *dev_time, float dev_temp,struct DS18B20_DATA *data)
 {
 	printf("---------------------------------------------------\n");
 	printf("dev_name: %s\n", dev_name);
@@ -135,7 +133,7 @@ int assign_data(char dev_name[64], char *dev_time, float dev_temp,struct DS18B20
 	data->d_temp = dev_temp;
 	printf("data->d_temp:%.2f\n",data->d_temp);
 	return 0;
-}
+}*/
 
 
 
