@@ -24,11 +24,11 @@ typedef struct socket_s
 	int			cli_port;
 } socket_t;
 
-int sock_connect(socket_t *my_socket);
+extern int sock_connect(socket_t *my_socket);
 
 
-int sock_write(socket_t *my_socket,data_t data, char *snd_buf);
+extern int sock_write(socket_t *my_socket,data_t data, char *snd_buf);
 
 
-int send_data(char *snd_buf,socket_t *my_socket);
+extern int send_data(char *snd_buf,socket_t *my_socket);
 #endif   /*  ----- #ifndef _SOCKET_H_  ----- */ 
