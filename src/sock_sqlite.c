@@ -11,30 +11,26 @@
  *                 
  ********************************************************************************/
 #include<stdio.h>
-#include<sys/types.h>
 #include<sys/stat.h>
 #include<fcntl.h>
 #include<string.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <dirent.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include<errno.h>
 #include<time.h>
 #include<sys/types.h>
-#include<sys/socket.h>
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<netinet/in.h>
-#include<getopt.h>
 #include<libgen.h>
 #include<sqlite3.h>
-#include<netinet/tcp.h>
-#include<sqlite3.h>
+#include <netinet/tcp.h>
+
 
 #include"temp.h"
 #include"socket.h"
 #include"sock_sqlite.h"
-
+#include"logger.h"
 
 
 static sqlite3			 *db = NULL;
@@ -50,7 +46,7 @@ int open_sqlite3()
 	printf("db pointer(in the dev_sqlite3): %p\n", (void *)db);
 	if( rc != SQLITE_OK)
 	{
-		fprintf(stderr,"Can not open database : %s\n", sqlite3_errmsg(db));
+		log_error("Can not open database : %s\n", sqlite3_errmsg(db));
 		sqlite3_close(db);
 		return -1;
 	}
@@ -66,7 +62,7 @@ int open_sqlite3()
 	rc = sqlite3_exec(db, sql_stmt, 0, 0, &err_msg);
 	if( rc != SQLITE_OK )
 	{
-		fprintf(stderr, "create table error:%s\n", err_msg);
+		log_error("create table error:%s\n", err_msg);
 		sqlite3_free(err_msg);
 		return -1;
 	}
@@ -92,7 +88,7 @@ int insert_data(data_t data)
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 	if (rc != SQLITE_OK) 
 	{
-		fprintf(stderr, "give values error: %s\n", err_msg);
+		log_error("give values error: %s\n", err_msg);
 		sqlite3_free(err_msg);
 		sqlite3_close(db);
 		return -1;
@@ -122,7 +118,7 @@ char  *read_data()
 	rc = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
 	if( rc != SQLITE_OK)
 	{
-		fprintf(stderr, "Failed to prepare statement : %s\n", sqlite3_errmsg(db));
+		log_error("Failed to prepare statement : %s\n", sqlite3_errmsg(db));
 		sqlite3_close(db);
 		return NULL;
 	}
@@ -172,8 +168,9 @@ int del_database(char *snd_buf)
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 	if(rc != SQLITE_OK)
 	{
-		fprintf(stderr, "delete data error : %s\n", sqlite3_errmsg(db));
+		log_error("delete data error : %s\n", sqlite3_errmsg(db));
 		sqlite3_free(err_msg);
+		return -1;
 	}
 
 	return 0;
@@ -194,7 +191,7 @@ int get_row()
 	rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
 	if( rc != SQLITE_OK )
 	{
-		fprintf(stderr, "Failed to prepare statement:%s\n", sqlite3_errmsg(db));
+		log_error("Failed to prepare statement:%s\n", sqlite3_errmsg(db));
 		sqlite3_close(db);
 		return -1;
 	}
@@ -207,7 +204,7 @@ int get_row()
 	}
 	else
 	{
-		fprintf(stderr,"Error executing query: %s\n",sqlite3_errmsg(db));
+		log_error("Error executing query: %s\n",sqlite3_errmsg(db));
 	}
 
 

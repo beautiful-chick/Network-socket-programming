@@ -27,6 +27,9 @@
 #include"temp.h"
 
 #include "packet.h"
+#include"logger.h"
+
+
 int	get_name(char buf2[1024],size_t buf2_size)
 {
 	int				fd2;
@@ -40,7 +43,7 @@ int	get_name(char buf2[1024],size_t buf2_size)
 	dirp1 = opendir(w2_path);
 	if( !dirp1 )
 	{
-		printf("Open the floder failure : %s\n",strerror(errno));
+		log_error("Open the floder failure : %s\n",strerror(errno));
 		return -1;
 	}
 
@@ -58,7 +61,7 @@ int	get_name(char buf2[1024],size_t buf2_size)
 
 	if(!found1)
 	{
-		printf("Can not find name chipset\n");
+		log_error("Can not find name chipset\n");
 		return -2;
 	}
 
@@ -70,7 +73,7 @@ int	get_name(char buf2[1024],size_t buf2_size)
 	fd2 = open(w2_path, O_RDONLY);
 	if( fd2 < 0 )
 	{
-		printf("Open the file about name failure : %s\n",strerror(errno));
+		log_error("Open the file about name failure : %s\n",strerror(errno));
 		return -3;
 	}
 
@@ -78,7 +81,7 @@ int	get_name(char buf2[1024],size_t buf2_size)
 	memset(buf2, 0, buf2_size);
 	if( read(fd2, buf2, buf2_size) < 0 )
 	{
-		printf("get devices number failure : %s\n",strerror(errno));
+		log_error("get devices number failure : %s\n",strerror(errno));
 		return -4;
 	}
 
@@ -100,7 +103,7 @@ char *get_time(char *now_time)
 
 	if( Now == NULL)
 	{
-		printf("localtime() Error: %s\n",strerror(errno));
+		log_error("localtime() Error: %s\n",strerror(errno));
 		return NULL;
 	}
 
@@ -110,30 +113,13 @@ char *get_time(char *now_time)
 
 	if(now_time == NULL)
 	{
-		printf("asctime() Error : %s\n",strerror(errno));
+		log_error("asctime() Error : %s\n",strerror(errno));
 		return NULL;
 	}
 	printf("In the get time now_time:%s\n",now_time);
 	return now_time;
 }
 
-
-
-/*int assign_data(char dev_name[64], char *dev_time, float dev_temp,struct DS18B20_DATA *data)
-{
-	printf("---------------------------------------------------\n");
-	printf("dev_name: %s\n", dev_name);
-	printf("dev_time: %s\n", dev_time);
-	printf("dev_temp: %.2f\n", dev_temp);
-
-	snprintf(data->d_name,32,dev_name);
-	printf("data->d_name:%s\n",data->d_name);
-	snprintf(data->d_time,32,dev_time);
-	printf("data->d_time:%s\n",data->d_time);
-	data->d_temp = dev_temp;
-	printf("data->d_temp:%.2f\n",data->d_temp);
-	return 0;
-}*/
 
 
 

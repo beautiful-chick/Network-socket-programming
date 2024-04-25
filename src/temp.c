@@ -20,6 +20,8 @@
 #include <errno.h>
 
 #include "temp.h"
+#include"logger.h"
+
 
 float get_temperature(float *temp)
 {
@@ -39,7 +41,7 @@ float get_temperature(float *temp)
 	dirp = opendir(w1_path);
 	if( !dirp )
 	{
-		printf("Open the floder failure : %s\n",strerror(errno));
+		log_error("Open the floder failure : %s\n",strerror(errno));
 		return -1;
 	}
 
@@ -56,7 +58,7 @@ float get_temperature(float *temp)
 
 	if( !found )
 	{
-		printf("can not find ds18b20 chipset\n");
+		log_error("can not find ds18b20 chipset\n");
 		return -2;
 	}
 
@@ -67,7 +69,7 @@ float get_temperature(float *temp)
 	fd = open(w1_path, O_RDONLY);
 	if( fd < 0 )
 	{
-		printf("Open the file failure : %s\n",strerror(errno));
+		log_error("Open the file failure : %s\n",strerror(errno));
 		return -1;
 	}
 	memset(buf, 0, sizeof(buf));
@@ -75,7 +77,7 @@ float get_temperature(float *temp)
 
 	if(read(fd, buf, sizeof(buf)) < 0 )
 	{
-		printf("Read data from fd = %d failure : %s\n",fd,strerror(errno));
+		log_error("Read data from fd = %d failure : %s\n",fd,strerror(errno));
 		return -2;
 	}
 	ptr = strstr(buf, "t=");
@@ -84,7 +86,7 @@ float get_temperature(float *temp)
 
 	if( NULL == ptr )
 	{
-		printf("Can not find t = String\n");
+		log_error("Can not find t = String\n");
 		return -1;
 	}
 	ptr += 2;
