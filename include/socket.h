@@ -24,10 +24,15 @@ typedef struct socket_s
 	int			cli_port;
 } socket_t;
 
+extern int socket_init(socket_t *my_socket, char *host, int port);
+
+
+extern int sock_close(socket_t *my_socket);
+
 extern int sock_connect(socket_t *my_socket);
 
 
-extern int sock_write(socket_t *my_socket,data_t data, char *snd_buf);
+extern int sock_write(socket_t *my_socket,data_t data);
 
 
 extern int send_data(char *snd_buf,socket_t *my_socket);

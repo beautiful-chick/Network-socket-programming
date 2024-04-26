@@ -13,11 +13,11 @@
 #ifndef			 _DS18B20_H_
 #define			_DS18B20_H_
 
-
+#include<time.h>
 
 typedef struct ds18b20
 {
-	char            *d_time;
+	char      		d_time[64];
 	float           d_temp;
 	char            d_name[64];
 }data_t;

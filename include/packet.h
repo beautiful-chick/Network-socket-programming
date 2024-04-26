@@ -20,7 +20,7 @@ int get_name(char buf2[1024], size_t buf2_size);
 
 /* Description : get the now time */
 
-char *get_time(char *now_time);
+int get_time(char *now_time);
 
 /*Description : Packaging the temperature,device id and now time*/
 

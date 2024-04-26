@@ -22,19 +22,19 @@
 
 /* Description : Inserting structure data into the database */
 
-int insert_data(data_t data);
+int sqlite_insert_data(data_t data);
 
 /* Description : read data from database*/
 
-char  *read_data();
+char  *sqlite_read_data();
 
 /* Description :  delete the data sent to database*/
 
-int del_database(char *snd_buf);
+int sqlite_del_data(char *snd_buf);
 
 /* Description :  get total database rows*/
 
-int get_row();
+int sqlite_get_row();
 
 
-int close_database();
+int sqlite_close_database();
