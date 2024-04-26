@@ -89,7 +89,8 @@ int	get_name(char buf2[1024],size_t buf2_size)
 }
 
 
-char *get_time(char *now_time)
+
+int get_time(char *now_time) 
 {
 	time_t			timer;
 	struct tm		*Now = NULL;
@@ -104,21 +105,21 @@ char *get_time(char *now_time)
 	if( Now == NULL)
 	{
 		log_error("localtime() Error: %s\n",strerror(errno));
-		return NULL;
+		return -1;
 	}
-
-
-	now_time = asctime(Now);
-
+	//now_time = asctime(Now);
+	snprintf(now_time, 64, asctime(Now));
 
 	if(now_time == NULL)
 	{
 		log_error("asctime() Error : %s\n",strerror(errno));
-		return NULL;
+		return -2;
 	}
 	printf("In the get time now_time:%s\n",now_time);
-	return now_time;
+	
+	return 0;
 }
+
 
 
 

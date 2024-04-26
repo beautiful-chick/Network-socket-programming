@@ -43,7 +43,8 @@ int open_sqlite3()
 
 
 	rc = sqlite3_open("dev_database.db", &db);
-	printf("db pointer(in the dev_sqlite3): %p\n", (void *)db);
+	log_debug("db pointer(in the dev_sqlite3): %p\n", (void *)db);
+
 	if( rc != SQLITE_OK)
 	{
 		log_error("Can not open database : %s\n", sqlite3_errmsg(db));
@@ -72,17 +73,15 @@ int open_sqlite3()
 
 
 
-int insert_data(data_t data)
+int sqlite_insert_data(data_t data)
 {
-	char			*sql;
+	char			sql[64];
 	char			*err_msg = 0;
 	int				rc;
-	printf("data.d_name:%s------data.d_time:%s-----------data.d_temp:%.2f\n",
+	log_debug("data.d_name:%s------data.d_time:%s-----------data.d_temp:%.2f\n",
 			data.d_name,data.d_time,data.d_temp);
 
-
-	sql = sqlite3_mprintf("INSERT INTO dev_mesg (de_name,de_time,de_temp) VALUES ('%s','%s',%.2f);"
-			,data.d_name,data.d_time,data.d_temp);
+	snprintf(sql, sizeof(sql), "INSERT INTO dev_mesg (de_name, de_time, de_temp) VALUES ('%s', '%s', %.2f);", data.d_name, data.d_time, data.d_temp);
 
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
@@ -93,7 +92,7 @@ int insert_data(data_t data)
 		sqlite3_close(db);
 		return -1;
 	}
-	printf("Record inserted successfully\n");
+	log_info("Record inserted successfully\n");
 
 
 	return 0;
@@ -102,11 +101,10 @@ int insert_data(data_t data)
 
 
 
-char  *read_data()
+char  *sqlite_read_data()
 
 {
-	char				read_buf[1024];
-	char				*snd_buf  = read_buf;
+	data_t				data;
 	int					rc;
 	static int			row_count; 
 	char				*errmsg;
@@ -129,10 +127,10 @@ char  *read_data()
 		const char *de_name = (const char *)sqlite3_column_text(stmt,0);
 		const char *de_time = (const char *)sqlite3_column_text(stmt,1);
 		double de_temp = sqlite3_column_double(stmt,2);
-		printf("de_name: %s, de_time: %s, de_temp: %.2f\n", de_name, de_time, de_temp);
-		memset(snd_buf,0,sizeof(read_buf));
-		snprintf(read_buf,2048,"%s,%s,%.2f", de_time, de_name, de_temp);
-		printf("%s", read_buf);
+		log_debug("de_name: %s, de_time: %s, de_temp: %.2f\n", de_name, de_time, de_temp);
+		strcpy(data.d_name, de_name);
+		strcpy(data.d_time, de_time);
+		data.d_temp = de_temp;
 
 	}
 	sqlite3_finalize(stmt);
@@ -146,23 +144,22 @@ char  *read_data()
 
 
 
-int del_database(char *snd_buf)
+int sqlite_del_data(char *snd_buf)
 {
 
 	struct tcp_info				optval;
 	socklen_t 					optlen = sizeof(optval);
 	static int					rc;
 	int							ret;
-	int							m;
 	char                		*err_msg;
 	int							row;		
 	char						*sql;
 
-	row = get_row();
-	printf("Now row:%d\n", row);
+	row = sqlite_get_row();
+	log_info("Now row:%d\n", row);
 
 	/* 删除数据*/
-	printf("Start to delete data\n");
+	log_debug("Start to delete data\n");
 
 	sql = "DELETE FROM dev_mesg WHERE ROWID IN (SELECT ROWID FROM dev_mesg LIMIT 1);";
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
@@ -178,7 +175,7 @@ int del_database(char *snd_buf)
 
 
 
-int get_row()
+int sqlite_get_row()
 {
 	static int 			row_count;
 	int					rc;
@@ -213,7 +210,7 @@ int get_row()
 }
 
 
-int close_database()
+int sqlite_close_database()
 {
 	sqlite3_close(db);
 }
