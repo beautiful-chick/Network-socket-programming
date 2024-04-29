@@ -171,7 +171,7 @@ int main(int argc, char **argv)
 		log_error("Create table error:%s\n",strerror(errno));
 	}
 	
-	socket_init(&my_socket, my_socket.host, my_socket.cli_port);
+	socket_init(&my_socket);
 
 
 	while( ! g_signal.stop )
