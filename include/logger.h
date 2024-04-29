@@ -6,7 +6,7 @@
  *    Description:  This file is common logger API functions
  *
  *        Version:  1.0.0(11/08/23)
- *         Author:  Guo Wenxue <guowenxue@gmail.com>
+ *         Author:  liZhao <3299832490@qq.com>
  *      ChangeLog:  1, Release initial version on "11/08/23 16:18:43"
  *
  ********************************************************************************/

@@ -20,10 +20,13 @@ typedef struct proc_signal_s
 	unsigned		stop;
 }  proc_signal_t;
 
-
 extern proc_signal_t  g_signal;
 
+/* Description : Capture the incoming signal */
+
 extern void proc_default_sighandler(int sig);
+
+/* Description : Install the signal*/
 
 extern void install_default_signal(void);
 
