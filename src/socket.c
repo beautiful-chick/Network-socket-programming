@@ -124,17 +124,40 @@ int sock_connect(socket_t *my_socket)
 
 
 
-int sock_write(socket_t *my_socket,data_t data)
+int sock_write(socket_t *my_socket,data_t data, char *d_data, int bytes)
 {
-	char		snd_buf[64];
-	snprintf(snd_buf, 64, "%s,%s,%.2f", data.d_time, data.d_name, data.d_temp);
-	log_debug("internet_write snd_buf:%s\n", snd_buf);
+	int			rv = 0;
+	int			i = 0;
+	int			left_bytes = bytes;
+	if( !my_socket || bytes<=0 || !d_data )
+		return -1;
 
 
-	if( write(my_socket->conn_fd, snd_buf, sizeof(snd_buf)) < 0 )
+	while( left_bytes > 0 )
 	{
-		log_error("Wirte data to server[%s:%d] failure : %s\n", my_socket->host[64], my_socket->cli_port, strerror(errno));	
-		sock_close(my_socket);
+		rv = write(my_socket->conn_fd, &d_data[i], left_bytes);
+
+		if( rv < 0 )
+		{
+			log_info("Socket write failure : %s\n", strerror(errno));
+			sock_close(my_socket);
+			return -2;
+		}
+
+
+		else if( rv == left_bytes )
+		{
+			log_info("socket send %d bytes data over\n", bytes);
+			return 0;
+		}
+
+		else
+		{
+			i += rv;
+			left_bytes -= rv;
+			continue;
+
+		}
 	}
 	return 0;
 }
@@ -143,10 +166,5 @@ int sock_write(socket_t *my_socket,data_t data)
 
 
 
-int send_data(char *snd_buf,socket_t *my_socket)
-{
 
-	write(my_socket->conn_fd, snd_buf, strlen(snd_buf));
-	return 0;
-}
 

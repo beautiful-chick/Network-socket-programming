@@ -124,7 +124,40 @@ int get_time(char *now_time)
 
 
 
+int get_devid(char *devid, int size, int sn)
+{
+	if( !devid || size<DEVID_LEN )
+	{
+		log_error("Invalid input arguments\n");
+		return -1;
+	}
 
+	memset(devid, 0, size);
+	snprintf(devid, size, "rpi#%04d", sn);
+	return 0;
+}
+
+
+
+
+
+
+int packet_data(data_t *data, uint8_t *pack_buf, int size)
+{
+	char				*buf = (char *)pack_buf;
+	
+	if( !data || !buf ||size <= 0 )
+	{
+		log_error("Invalid input arguments\n");
+		return -1;
+	}
+
+	memset(buf, 0, size);
+	snprintf(buf, size, "%s,%s,%.2f", data->d_name, data->d_time, data->d_temp);
+
+	return strlen(buf);
+	
+}
 
 
 

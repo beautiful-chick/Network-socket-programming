@@ -75,7 +75,7 @@ int open_sqlite3()
 
 int sqlite_insert_data(data_t data)
 {
-	char			sql[64];
+	char			sql[256];
 	char			*err_msg = 0;
 	int				rc;
 	log_debug("data.d_name:%s------data.d_time:%s-----------data.d_temp:%.2f\n",
@@ -101,7 +101,7 @@ int sqlite_insert_data(data_t data)
 
 
 
-char  *sqlite_read_data()
+int sqlite_read_data()
 
 {
 	data_t				data;
@@ -118,7 +118,7 @@ char  *sqlite_read_data()
 	{
 		log_error("Failed to prepare statement : %s\n", sqlite3_errmsg(db));
 		sqlite3_close(db);
-		return NULL;
+		return -1;
 	}
 
 	rc = sqlite3_step(stmt);
@@ -134,7 +134,7 @@ char  *sqlite_read_data()
 
 	}
 	sqlite3_finalize(stmt);
-	return snd_buf;
+	return 0;
 
 }
 

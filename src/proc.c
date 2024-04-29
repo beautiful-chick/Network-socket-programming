@@ -47,9 +47,12 @@ void proc_default_sighandler(int sig)
 
 		case SIGSEGV:
 			log_warn("SIGSEGV - stopping\n");
+			g_signal.stop = 1;
+			break;
 
 		case SIGPIPE:
 			log_warn("SIGPIPE - warnning\n");
+			g_signal.stop = 1;
 			break;
 
 		default:
