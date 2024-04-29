@@ -12,6 +12,9 @@
  ********************************************************************************/
 #ifndef		_PACKET_H_
 #define		_PACKET_H_
+
+#define DEVID_LEN          8
+
 #include"temp.h"
 
 /* Description : get the devices name */
@@ -22,8 +25,13 @@ int get_name(char buf2[1024], size_t buf2_size);
 
 int get_time(char *now_time);
 
-/*Description : Packaging the temperature,device id and now time*/
 
-//int assign_data(char dev_name[64], char *dev_time, float dev_temp,struct data_t *data);
+
+extern int packet_data(data_t *data, uint8_t * pack_buf, int size);
+
+typedef int (*pack_proc_t)(data_t *data, uint8_t *pack_buf, int size);
+
+
+
 
 #endif   /*  ----- #ifndef _PACKET_H_  ----- */ 

@@ -32,8 +32,6 @@ extern int sock_close(socket_t *my_socket);
 extern int sock_connect(socket_t *my_socket);
 
 
-extern int sock_write(socket_t *my_socket,data_t data);
+extern int sock_write(socket_t *my_socket,data_t data, char *d_data, int bytes);
 
-
-extern int send_data(char *snd_buf,socket_t *my_socket);
 #endif   /*  ----- #ifndef _SOCKET_H_  ----- */ 
