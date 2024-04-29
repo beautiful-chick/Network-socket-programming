@@ -81,7 +81,8 @@ int main(int argc, char **argv)
 
 	int					opt;
 	char				*progname = NULL;
-
+	char              	*serverip = NULL;
+	int					port = 0;
 
 	int					rv = -1;
 	int					rc;
@@ -93,7 +94,7 @@ int main(int argc, char **argv)
 	time_t				last_time = 0;
 	
 
-	socket_t 			my_socket;
+	socket_t 			sock;
 	struct tcp_info		optval;
 	socklen_t 			optlen = sizeof(optval);
 	char     	        snd_buf[1024] = {0};
@@ -131,21 +132,26 @@ int main(int argc, char **argv)
 		switch(opt)
 		{
 			case 'p':
-				my_socket.cli_port = atoi(optarg);
+				port = atoi(optarg);
 				break;
+			
 			case 'i':
-				strcpy(my_socket.host, optarg);
+				serverip = optarg;
 				break;
+			
 			case 't':
 				timeout = atoi(optarg);
 				break;
+			
 			case 'd':
 				logfile="console";/* set log_name:console*/
 				loglevel=LOG_LEVEL_DEBUG;/*set level is record all debug information*/
 				break;
+			
 			case 'h':
 				print_usage(progname);
 				return 0;
+			
 			default:
 				break;
 		}
@@ -160,7 +166,6 @@ int main(int argc, char **argv)
 
 	install_default_signal();	
 	
-
 	rv = open_sqlite3();
 	if( 0 == rv )
 	{
@@ -172,8 +177,7 @@ int main(int argc, char **argv)
 		return 2;
 	}
 	
-	socket_init(&my_socket);
-
+	socket_init(&sock, serverip, port);
 
 	while( ! g_signal.stop )
 	{
@@ -201,7 +205,7 @@ int main(int argc, char **argv)
 				log_info("name:%s\n", data.d_name);
 			}
 
-			get_time(data.d_time);
+			get_time(&data.time_str);
 			if( data.d_time  != NULL )
 			{
 				log_info("Current time is:%s\n", data.d_time);
@@ -219,26 +223,23 @@ int main(int argc, char **argv)
 		}
 		
 
-		if(my_socket.conn_fd < 0 )
+		if(sock.conn_fd < 0 )
 		{
-			sock_connect(&my_socket);
+			sock_connect(&sock);
 		}
 		
-		ret = getsockopt(my_socket.conn_fd, IPPROTO_TCP, TCP_INFO, &optval, &optlen);
-
+		ret = getsockopt(sock.conn_fd, IPPROTO_TCP, TCP_INFO, &optval, &optlen);
 		if( ret != 0 )
 		{
-			rv = sock_connect( &my_socket );
-			
+			rv = sock_connect( &sock );
 			if( rv < 0 )
 			{
-				sock_close(&my_socket);
+				sock_close(&sock);
 
 				if( flag == 1 )
 				{
 					log_debug("Start to insert_data\n");
 					sqlite_insert_data(data);
-
 				}
 
 				continue;
@@ -249,12 +250,11 @@ int main(int argc, char **argv)
 		if( flag == 1 )
 		{
 			/* 发送当前采样的数据*/
-			rv = sock_write(&my_socket, data, pack_buf, pack_bytes);
-
+			rv = sock_write(&sock, pack_buf, pack_bytes);
 			/* 发送失败，将数据再存到数据库中*/
 			if( rv < 0 )
 			{
-				sock_close(&my_socket);
+				sock_close(&sock);
 				sqlite_insert_data(data);
 				continue;
 			}
@@ -267,9 +267,7 @@ int main(int argc, char **argv)
 		if(row != 0)
 		{
 			/* 提取,发送一条数据*/
-			
 			rv = sqlite_read_data();
-			
 			if( 0 == rv )
 			{
 				log_info("Extract data ok\n");
@@ -280,17 +278,17 @@ int main(int argc, char **argv)
 				continue;
 			}
 			
-			rv = sock_write(&my_socket, data, pack_buf, pack_bytes);
+			rv = sock_write(&sock, pack_buf, pack_bytes);
 			if( rv < 0 )
 			{
-				sock_close(&my_socket);
+				sock_close(&sock);
 
 				log_error("Send error\n");
 				continue;
 			}
 			
 			/* 删除一条数据*/
-			rv = sqlite_del_data(snd_buf);
+			rv = sqlite_del_data();
 			if( rv < 0 )
 			{
 				log_error("delete the data error:%s\n",strerror(errno));
@@ -300,7 +298,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	sock_close(&my_socket);
+	sock_close(&sock);
 	msleep(5);
 	sqlite_close_database();
 	log_close();
