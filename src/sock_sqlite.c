@@ -17,9 +17,7 @@
 #include<unistd.h>
 #include<stdlib.h>
 #include<errno.h>
-#include<time.h>
 #include<sys/types.h>
-#include<netinet/in.h>
 #include<arpa/inet.h>
 #include<netinet/in.h>
 #include<libgen.h>
@@ -48,7 +46,7 @@ int open_sqlite3(void)
 	if( rc != SQLITE_OK)
 	{
 		log_error("Can not open database : %s\n", sqlite3_errmsg(db));
-		sqlite_close_database(db);
+		sqlite_close_database();
 		return -1;
 	}
 
@@ -215,6 +213,7 @@ int sqlite_get_row(void)
 
 int sqlite_close_database(void)
 {
+	
 	sqlite3_close(db);
 }
 

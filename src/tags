@@ -1,0 +1,121 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AR	makefile	/^AR=ar$/;"	m
+CC	makefile	/^CC=gcc$/;"	m
+CHARS_PER_LINE	logger.c	205;"	d	file:
+INCPATH	makefile	/^INCPATH=`pwd`\/..\/include\/$/;"	m
+INSTPATH	makefile	/^INSTPATH=`pwd`\/..\/lib\/$/;"	m
+L	logger.c	/^} L;$/;"	v	typeref:struct:__anon1	file:
+LIBNAME	makefile	/^LIBNAME=myclient$/;"	m
+LINELEN	logger.c	204;"	d	file:
+Now	packet.c	/^	struct tm		*Now = NULL;$/;"	l
+_log_write	logger.c	/^void _log_write(int level, const char *file, int line, const char *fmt, ...)$/;"	f
+args	logger.c	/^    va_list    args;$/;"	l
+buf	temp.c	/^	char				buf[1024];$/;"	l
+c	logger.c	/^            unsigned char c = buf[idx];$/;"	l
+chip_sn	temp.c	/^	char				chip_sn[32];$/;"	l
+chip_sn1	packet.c	/^	char			chip_sn1[256];$/;"	l
+close_database	sock_sqlite.c	/^int close_database()$/;"	f
+cmd	logger.c	/^    char       cmd[128]={0};$/;"	l
+db	sock_sqlite.c	/^static sqlite3			 *db = NULL;$/;"	v	file:
+de_name	sock_sqlite.c	/^		const char *de_name = (const char *)sqlite3_column_text(stmt,0);$/;"	l
+de_temp	sock_sqlite.c	/^		double de_temp = sqlite3_column_double(stmt,2);$/;"	l
+de_time	sock_sqlite.c	/^		const char *de_time = (const char *)sqlite3_column_text(stmt,1);$/;"	l
+del_database	sock_sqlite.c	/^int del_database(char *snd_buf)$/;"	f
+direntp	temp.c	/^	struct dirent		*direntp = NULL;$/;"	l
+direntp1	packet.c	/^	struct dirent	*direntp1 = NULL;$/;"	l
+dirp	temp.c	/^	DIR					*dirp = NULL;$/;"	l
+dirp1	packet.c	/^	DIR				*dirp1 = NULL;$/;"	l
+ds18b20_path	temp.c	/^	char				ds18b20_path[164];$/;"	l
+err	logger.c	/^    int              err;$/;"	l
+err_msg	sock_sqlite.c	/^	char			*err_msg = 0;$/;"	l
+err_msg	sock_sqlite.c	/^	char 		*err_msg = 0;$/;"	l
+err_msg	sock_sqlite.c	/^	char                		*err_msg;$/;"	l
+errmsg	sock_sqlite.c	/^	char				*errmsg;$/;"	l
+fd	temp.c	/^	int					fd;$/;"	l
+fd2	packet.c	/^	int				fd2;$/;"	l
+file	logger.c	/^    char        file[32]; \/* logger file name *\/$/;"	m	struct:__anon1	file:
+found	temp.c	/^	int					found = 0;$/;"	l
+found1	packet.c	/^	int				found1 = 0;$/;"	l
+fp	logger.c	/^    FILE            *fp;$/;"	l
+fp	logger.c	/^    FILE       *fp;       \/* logger file pointer *\/$/;"	m	struct:__anon1	file:
+fsize	logger.c	/^    long       fsize;$/;"	l
+g_signal	proc.c	/^proc_signal_t  g_signal = {0};$/;"	v
+get_name	packet.c	/^int	get_name(char buf2[1024],size_t buf2_size)$/;"	f
+get_row	sock_sqlite.c	/^int get_row()$/;"	f
+get_temperature	temp.c	/^float get_temperature(float *temp)$/;"	f
+get_time	packet.c	/^char *get_time(char *now_time)$/;"	f
+hc	logger.c	/^    char hc[4];$/;"	l
+hints	socket.c	/^	struct addrinfo			hints,*rp;$/;"	l
+idx	logger.c	/^    int idx;$/;"	l
+inaddr	socket.c	/^	struct in_addr      	inaddr;$/;"	l
+insert_data	sock_sqlite.c	/^int insert_data(data_t data)$/;"	f
+install_default_signal	proc.c	/^void install_default_signal(void)$/;"	f
+l	logger.c	/^    pthread_mutex_t *l = (pthread_mutex_t *) udata;$/;"	l
+ldx	logger.c	/^        int ldx = idx % CHARS_PER_LINE;$/;"	l
+len	logger.c	/^    int              len;$/;"	l
+len	socket.c	/^	int						len = sizeof(serv_addr);$/;"	l
+level	logger.c	/^    int         level;    \/* logger level *\/$/;"	m	struct:__anon1	file:
+level_colors	logger.c	/^static const char *level_colors[] = {$/;"	v	file:
+level_names	logger.c	/^static const char *level_names[] = {$/;"	v	file:
+line_done	logger.c	/^    short line_done = 1;$/;"	l
+lit	logger.c	/^    char lit[CHARS_PER_LINE + 2];$/;"	l
+lockfn	logger.c	/^    log_LockFn  lockfn;   \/* lock function *\/$/;"	m	struct:__anon1	file:
+log_LockFn	logger.c	/^typedef void (*log_LockFn)(void *udata, int lock);$/;"	t	file:
+log_close	logger.c	/^void log_close(void)$/;"	f
+log_dump	logger.c	/^void log_dump(int level, const char *prompt, char *buf, size_t len)$/;"	f
+log_lock	logger.c	/^        static pthread_mutex_t     log_lock;$/;"	l	file:
+log_open	logger.c	/^int log_open(char *fname, int level, int size, int lock)$/;"	f
+log_rollback	logger.c	/^static void log_rollback(void)$/;"	f	file:
+m	sock_sqlite.c	/^	int							m;$/;"	l
+mutex_lock	logger.c	/^static void mutex_lock(void *udata, int lock)$/;"	f	file:
+open_sqlite3	sock_sqlite.c	/^int open_sqlite3()$/;"	f
+optlen	sock_sqlite.c	/^	socklen_t 					optlen = sizeof(optval);$/;"	l
+optval	sock_sqlite.c	/^	struct tcp_info				optval;$/;"	l
+print_char	logger.c	/^static char *print_char =$/;"	v	file:
+prn	logger.c	/^    char prn[LINELEN];$/;"	l
+proc_default_sighandler	proc.c	/^void proc_default_sighandler(int sig)$/;"	f
+ptr	temp.c	/^	char				*ptr;$/;"	l
+rc	logger.c	/^    int rc;$/;"	l
+rc	sock_sqlite.c	/^	int					rc;$/;"	l
+rc	sock_sqlite.c	/^	int				rc;$/;"	l
+rc	sock_sqlite.c	/^	int 		rc;$/;"	l
+rc	sock_sqlite.c	/^	static int					rc;$/;"	l	file:
+read_buf	sock_sqlite.c	/^	char				read_buf[1024];$/;"	l
+read_data	sock_sqlite.c	/^char  *read_data()$/;"	f
+res	socket.c	/^	struct addrinfo			*res = NULL;$/;"	l
+ret	sock_sqlite.c	/^	int							ret;$/;"	l
+row	sock_sqlite.c	/^	int							row;		$/;"	l
+row_count	sock_sqlite.c	/^	static int			row_count; $/;"	l	file:
+row_count	sock_sqlite.c	/^	static int 			row_count;$/;"	l	file:
+rp	socket.c	/^	struct addrinfo			hints,*rp;$/;"	l
+rv	socket.c	/^	int						rv = 0;$/;"	l
+send_data	socket.c	/^int send_data(char *snd_buf,socket_t *my_socket)$/;"	f
+serv_addr	socket.c	/^	struct sockaddr_in		serv_addr;$/;"	l
+service	socket.c	/^	char					service[20];$/;"	l
+sigact	proc.c	/^	struct sigaction sigact,sigign;$/;"	l
+sigign	proc.c	/^	struct sigaction sigact,sigign;$/;"	l
+size	logger.c	/^    long        size;     \/* logger file max size *\/$/;"	m	struct:__anon1	file:
+snd_buf	sock_sqlite.c	/^	char				*snd_buf  = read_buf;$/;"	l
+snd_buf	socket.c	/^	char		snd_buf[64];$/;"	l
+sock_connect	socket.c	/^int sock_connect(socket_t *my_socket)$/;"	f
+sock_write	socket.c	/^int sock_write(socket_t *my_socket,data_t data)$/;"	f
+sockfd	socket.c	/^	int						sockfd = 0;$/;"	l
+sql	sock_sqlite.c	/^	char						*sql;$/;"	l
+sql	sock_sqlite.c	/^	char			*sql;$/;"	l
+sql	sock_sqlite.c	/^	char		*sql = 0;$/;"	l
+sql	sock_sqlite.c	/^	const char			*sql;$/;"	l
+sql_stmt	sock_sqlite.c	/^	const char *sql_stmt = $/;"	l
+stmt	sock_sqlite.c	/^	sqlite3_stmt		*stmt;$/;"	l
+time_string	logger.c	/^    char       time_string[100];$/;"	l
+time_to_str	logger.c	/^static inline void time_to_str(char *buf)$/;"	f	file:
+timer	packet.c	/^	time_t			timer;$/;"	l
+tm	logger.c	/^    struct tm       *tm;$/;"	l
+tv	logger.c	/^    struct timeval   tv;$/;"	l
+udata	logger.c	/^    void       *udata;    \/* lock data *\/$/;"	m	struct:__anon1	file:
+w1_path	temp.c	/^	char				w1_path[64] = "\/sys\/bus\/w1\/devices\/";$/;"	l
+w2_path	packet.c	/^	char			w2_path[64] = "\/sys\/bus\/w1\/devices\/";$/;"	l

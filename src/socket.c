@@ -35,10 +35,10 @@
 
 
 
-int socket_init(socket_t *my_socket, char *host, int port)
+int socket_init(socket_t *my_socket)
 {
 	my_socket->conn_fd = -1;
-	my_socket->cli_port = port;
+
 
 	return 0;
 }
