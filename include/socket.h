@@ -26,7 +26,7 @@ typedef struct socket_s
 
 /* Description :  Initialize network socket related functions */
 
-extern int socket_init(socket_t *my_socket, char *host, int port);
+extern int socket_init(socket_t *my_socket);
 
 /* Description : Close network socket related functions */
 
