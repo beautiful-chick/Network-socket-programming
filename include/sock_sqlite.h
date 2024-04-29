@@ -28,7 +28,7 @@ int sqlite_read_data(void);
 
 /* Description :  delete the data sent to database*/
 
-int sqlite_del_data(char *snd_buf);
+int sqlite_del_data();
 
 /* Description :  get total database rows*/
 

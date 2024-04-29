@@ -17,9 +17,10 @@
 
 typedef struct ds18b20
 {
-	char      		d_time[64];
+	struct tm      	time_str;
 	float           d_temp;
-	char            d_name[64];
+	char            d_name[32];
+	char			d_time[128];
 }data_t;
 
 

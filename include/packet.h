@@ -23,7 +23,7 @@ extern int get_name(char *nameid, int size, int sn);
 
 /* Description : get the now time */
 
-extern int get_time(char *now_time);
+extern int get_time(struct tm *ptm);
 
 /* Description : Package the data and calculate the data size */
 

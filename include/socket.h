@@ -13,6 +13,8 @@
 #ifndef  _SOCKET_H_
 #define  _SOCKET_H_
 
+#define HOSTNAME_LEN   64
+
 #include"temp.h"
 
 
@@ -21,23 +23,24 @@ typedef struct socket_s
 {
 	int			conn_fd;
 	char		host[64];
-	int			cli_port;
+	int			port;
 } socket_t;
 
 /* Description :  Initialize network socket related functions */
 
-extern int socket_init(socket_t *my_socket);
+extern int socket_init(socket_t *sock, char *host, int port);
 
 /* Description : Close network socket related functions */
 
-extern int sock_close(socket_t *my_socket);
+extern int sock_close(socket_t *sock);
 
 /* Description : Make a network socket connection */
 
-extern int sock_connect(socket_t *my_socket);
+extern int sock_connect(socket_t *sock);
 
 /* Description : Sending data over a network socket */
 
-extern int sock_write(socket_t *my_socket,data_t data, char *d_data, int bytes);
+extern int sock_write(socket_t *sock, char *d_data, int bytes);
+
 
 #endif   /*  ----- #ifndef _SOCKET_H_  ----- */ 
