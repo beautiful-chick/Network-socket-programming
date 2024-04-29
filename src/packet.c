@@ -1,12 +1,12 @@
 /*********************************************************************************
- *      Copyright:  (C) 2024 LiYi<1751425323@qq.com>
+ *      Copyright:  (C) 2024 LiZhao<3299832490@qq.com>
  *                  All rights reserved.
  *
  *       Filename:  packet.c
  *    Description:  This file 
  *                 
  *        Version:  1.0.0(16/04/24)
- *         Author:  LiYi <1751425323@qq.com>
+ *         Author:  LiZhao <3299832490@qq.com>
  *      ChangeLog:  1, Release initial version on "16/04/24 11:19:03"
  *                 
  ********************************************************************************/
@@ -30,7 +30,22 @@
 #include"logger.h"
 
 
-int	get_name(char buf2[1024],size_t buf2_size)
+int get_name(char *nameid, int size, int sn)
+{
+	if( !nameid )
+	{
+		log_error("Invalid input arguments\n");
+		return -1;
+	}
+
+	memset(nameid, 0, size);
+	snprintf(nameid, size, "rpi#%04d", sn);
+	return 0;
+}
+
+
+
+/*int	get_name(char buf2[1024],size_t buf2_size)
 {
 	int				fd2;
 	char			w2_path[64] = "/sys/bus/w1/devices/";
@@ -87,7 +102,7 @@ int	get_name(char buf2[1024],size_t buf2_size)
 
 	return 0;
 }
-
+*/
 
 
 int get_time(char *now_time) 

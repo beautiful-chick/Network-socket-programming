@@ -1,12 +1,12 @@
 /*********************************************************************************
- *      Copyright:  (C) 2024 LiYi<1751425323@qq.com>
+ *      Copyright:  (C) 2024 LiZhao<3299832490@qq.com>
  *                  All rights reserved.
  *
  *       Filename:  temp.c
  *    Description:  This file 
  *                 
  *        Version:  1.0.0(17/04/24)
- *         Author:  LiYi <1751425323@qq.com>
+ *         Author:  LiZhao <3299832490@qq.com>
  *      ChangeLog:  1, Release initial version on "17/04/24 13:05:42"
  *                 
  ********************************************************************************/

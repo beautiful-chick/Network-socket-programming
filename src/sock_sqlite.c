@@ -1,12 +1,12 @@
 /*********************************************************************************
- *      Copyright:  (C) 2024 LiYi<1751425323@qq.com>
+ *      Copyright:  (C) 2024 LiZhao<3299832490@qq.com>
  *                  All rights reserved.
  *
  *       Filename:  sock_sqlite.c
  *    Description:  This file 
  *                 
  *        Version:  1.0.0(17/04/24)
- *         Author:  LiYi <1751425323@qq.com>
+ *         Author:  LiZhao <3299832490@qq.com>
  *      ChangeLog:  1, Release initial version on "17/04/24 14:26:52"
  *                 
  ********************************************************************************/
@@ -35,7 +35,7 @@
 
 static sqlite3			 *db = NULL;
 
-int open_sqlite3()
+int open_sqlite3(void)
 {
 	int 		rc;
 	char 		*err_msg = 0;
@@ -48,7 +48,7 @@ int open_sqlite3()
 	if( rc != SQLITE_OK)
 	{
 		log_error("Can not open database : %s\n", sqlite3_errmsg(db));
-		sqlite3_close(db);
+		sqlite_close_database(db);
 		return -1;
 	}
 
@@ -65,6 +65,7 @@ int open_sqlite3()
 	{
 		log_error("create table error:%s\n", err_msg);
 		sqlite3_free(err_msg);
+		sqlite_close_database();
 		return -1;
 	}
 	printf("Table create successfully\n");
@@ -89,7 +90,7 @@ int sqlite_insert_data(data_t data)
 	{
 		log_error("give values error: %s\n", err_msg);
 		sqlite3_free(err_msg);
-		sqlite3_close(db);
+		sqlite_close_database();
 		return -1;
 	}
 	log_info("Record inserted successfully\n");
@@ -101,7 +102,7 @@ int sqlite_insert_data(data_t data)
 
 
 
-int sqlite_read_data()
+int sqlite_read_data(void)
 
 {
 	data_t				data;
@@ -117,7 +118,7 @@ int sqlite_read_data()
 	if( rc != SQLITE_OK)
 	{
 		log_error("Failed to prepare statement : %s\n", sqlite3_errmsg(db));
-		sqlite3_close(db);
+		sqlite_close_database();
 		return -1;
 	}
 
@@ -167,6 +168,7 @@ int sqlite_del_data(char *snd_buf)
 	{
 		log_error("delete data error : %s\n", sqlite3_errmsg(db));
 		sqlite3_free(err_msg);
+		sqlite_close_database();
 		return -1;
 	}
 
@@ -175,7 +177,7 @@ int sqlite_del_data(char *snd_buf)
 
 
 
-int sqlite_get_row()
+int sqlite_get_row(void)
 {
 	static int 			row_count;
 	int					rc;
@@ -189,7 +191,7 @@ int sqlite_get_row()
 	if( rc != SQLITE_OK )
 	{
 		log_error("Failed to prepare statement:%s\n", sqlite3_errmsg(db));
-		sqlite3_close(db);
+		sqlite_close_database();
 		return -1;
 	}
 
@@ -202,6 +204,7 @@ int sqlite_get_row()
 	else
 	{
 		log_error("Error executing query: %s\n",sqlite3_errmsg(db));
+		sqlite_close_database();
 	}
 
 
@@ -210,7 +213,7 @@ int sqlite_get_row()
 }
 
 
-int sqlite_close_database()
+int sqlite_close_database(void)
 {
 	sqlite3_close(db);
 }
