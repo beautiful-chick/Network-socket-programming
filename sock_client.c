@@ -169,6 +169,7 @@ int main(int argc, char **argv)
 	else
 	{
 		log_error("Create table error:%s\n",strerror(errno));
+		return 2;
 	}
 	
 	socket_init(&my_socket);
@@ -188,6 +189,7 @@ int main(int argc, char **argv)
 			else
 			{
 				log_error("Temperature error:%s\n", strerror(errno));
+				continue;
 			}
 
 			if( (get_name(data.d_name, sizeof(data.d_name), 88)) != 0 )
