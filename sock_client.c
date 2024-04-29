@@ -1,12 +1,12 @@
 /*********************************************************************************
- *      Copyright:  (C) 2024 LiYi<1751425323@qq.com>
+ *      Copyright:  (C) 2024 LiZhao<3299832490@qq.com>
  *                  All rights reserved.
  *
  *       Filename:  sock_client.c
  *    Description:  This file 
  *                 
  *        Version:  1.0.0(17/04/24)
- *         Author:  LiYi <1751425323@qq.com>
+ *         Author:  LiZhao <3299832490@qq.com>
  *      ChangeLog:  1, Release initial version on "17/04/24 20:39:19"
  *                 
 ********************************************************************************/
@@ -81,7 +81,6 @@ int main(int argc, char **argv)
 
 	int					opt;
 	char				*progname = NULL;
-	//int					daemon = 1;
 
 
 	int					rv = -1;
@@ -141,7 +140,6 @@ int main(int argc, char **argv)
 				timeout = atoi(optarg);
 				break;
 			case 'd':
-	//			daemon = 0;
 				logfile="console";/* set log_name:console*/
 				loglevel=LOG_LEVEL_DEBUG;/*set level is record all debug information*/
 				break;
@@ -192,7 +190,7 @@ int main(int argc, char **argv)
 				log_error("Temperature error:%s\n", strerror(errno));
 			}
 
-			if( (get_name(data.d_name, sizeof(data.d_name))) != 0 )
+			if( (get_name(data.d_name, sizeof(data.d_name), 88)) != 0 )
 			{
 				log_error("Get name error:%s\n", strerror(errno));
 			}
@@ -213,7 +211,7 @@ int main(int argc, char **argv)
 
 			log_debug("Get the important data ok\n");
 			pack_bytes = packet_data(&data, pack_buf, sizeof(pack_buf));
-			printf("pack_bytes:%d\n", pack_bytes);
+			log_debug("pack_bytes:%d\n", pack_bytes);
 
 			flag = 1;
 		}
@@ -221,12 +219,10 @@ int main(int argc, char **argv)
 
 		if(my_socket.conn_fd < 0 )
 		{
-			printf("my_socket.conn_fd:%d\n", my_socket.conn_fd);
 			sock_connect(&my_socket);
 		}
 		
 		ret = getsockopt(my_socket.conn_fd, IPPROTO_TCP, TCP_INFO, &optval, &optlen);
-	//	printf("ret:%d\n", ret);
 
 		if( ret != 0 )
 		{
@@ -251,10 +247,7 @@ int main(int argc, char **argv)
 		if( flag == 1 )
 		{
 			/* 发送当前采样的数据*/
-			printf("rv:%d\n", rv);
 			rv = sock_write(&my_socket, data, pack_buf, pack_bytes);
-			printf("11111111111\n");
-			//rv = sock_write(&my_socket, data, pack_buf, pack_bytes);
 
 			/* 发送失败，将数据再存到数据库中*/
 			if( rv < 0 )
