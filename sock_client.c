@@ -77,35 +77,45 @@ static inline void msleep(unsigned long ms)
 int main(int argc, char **argv)
 {
 	int					timeout;
+	struct tm 			Now;
+
 	int					opt;
 	char				*progname = NULL;
+	//int					daemon = 1;
+
+
 	int					rv = -1;
 	int					rc;
+
 	float				temp;
 	char				name_buf[64];
 	int					flag;
+	double				time_diff;
 	time_t				last_time = 0;
+	
+
+	socket_t 			my_socket;
 	struct tcp_info		optval;
 	socklen_t 			optlen = sizeof(optval);
-	int					ret;
-	int					row;
-	double				time_diff;
 	char     	        snd_buf[1024] = {0};
-	data_t				data;
-	
-	socket_t 			my_socket;
 	char				*send_buf;
-	
+	int					ret;
+
+
+	int					row;
+	data_t				data;
+
+	int					pack_bytes = 0;
+	char				pack_buf[1024];
+	pack_proc_t         pack_proc = packet_data;
+
 	char                *logfile="sock_client.log";
 	int                 loglevel=LOG_LEVEL_INFO;
 	int                 logsize=10; /*  logfile size max to 10K */ 
 	
-	int					daemon = 1;
-	struct tm 			Now;
 
-
-	progname =		    (char *)basename(argv[0]);
-	struct option		long_options[] = 
+	progname = (char *)basename(argv[0]);
+	struct option long_options[] = 
 	{
 		{"port", required_argument, NULL, 'p'},
 		{"IP Address", required_argument, NULL, 'i'},
@@ -117,7 +127,7 @@ int main(int argc, char **argv)
 	};
 
 
-	while( (opt = getopt_long(argc,argv,"p:i:t:hd",long_options,NULL)) != -1 )
+	while( (opt = getopt_long(argc,argv,"p:i:t:dh",long_options,NULL)) != -1 )
 	{
 		switch(opt)
 		{
@@ -131,9 +141,10 @@ int main(int argc, char **argv)
 				timeout = atoi(optarg);
 				break;
 			case 'd':
-				daemon = 0;
+	//			daemon = 0;
 				logfile="console";/* set log_name:console*/
 				loglevel=LOG_LEVEL_DEBUG;/*set level is record all debug information*/
+				break;
 			case 'h':
 				print_usage(progname);
 				return 0;
@@ -149,6 +160,9 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	install_default_signal();	
+	
+
 	rv = open_sqlite3();
 	if( 0 == rv )
 	{
@@ -160,9 +174,6 @@ int main(int argc, char **argv)
 	}
 	
 	socket_init(&my_socket, my_socket.host, my_socket.cli_port);
-
-
-	install_default_signal();	
 
 
 	while( ! g_signal.stop )
@@ -201,16 +212,22 @@ int main(int argc, char **argv)
 			}
 
 			log_debug("Get the important data ok\n");
+			pack_bytes = packet_data(&data, pack_buf, sizeof(pack_buf));
+			printf("pack_bytes:%d\n", pack_bytes);
+
 			flag = 1;
 		}
 		
 
 		if(my_socket.conn_fd < 0 )
 		{
+			printf("my_socket.conn_fd:%d\n", my_socket.conn_fd);
 			sock_connect(&my_socket);
 		}
 		
 		ret = getsockopt(my_socket.conn_fd, IPPROTO_TCP, TCP_INFO, &optval, &optlen);
+	//	printf("ret:%d\n", ret);
+
 		if( ret != 0 )
 		{
 			rv = sock_connect( &my_socket );
@@ -234,7 +251,11 @@ int main(int argc, char **argv)
 		if( flag == 1 )
 		{
 			/* 发送当前采样的数据*/
-			rv = sock_write(&my_socket, data);
+			printf("rv:%d\n", rv);
+			rv = sock_write(&my_socket, data, pack_buf, pack_bytes);
+			printf("11111111111\n");
+			//rv = sock_write(&my_socket, data, pack_buf, pack_bytes);
+
 			/* 发送失败，将数据再存到数据库中*/
 			if( rv < 0 )
 			{
@@ -252,9 +273,9 @@ int main(int argc, char **argv)
 		{
 			/* 提取,发送一条数据*/
 			
-			send_buf = sqlite_read_data();
+			rv = sqlite_read_data();
 			
-			if(send_buf != NULL)
+			if( 0 == rv )
 			{
 				log_info("Extract data ok\n");
 			}
@@ -264,7 +285,7 @@ int main(int argc, char **argv)
 				continue;
 			}
 			
-			rv = send_data(send_buf, &my_socket);
+			rv = sock_write(&my_socket, data, pack_buf, pack_bytes);
 			if( rv < 0 )
 			{
 				sock_close(&my_socket);
