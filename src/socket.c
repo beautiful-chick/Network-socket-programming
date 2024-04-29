@@ -35,33 +35,38 @@
 
 
 
-int socket_init(socket_t *my_socket)
+int socket_init(socket_t *sock, char *host, int port)
 {
-	my_socket->conn_fd = -1;
-
+	if( !sock || port <= 0 )
+		return -1;
+	memset(sock, 0, sizeof(*sock) );
+	sock->conn_fd = -1;
+	sock->port = port;
+	if( host )
+	{
+		strncpy(sock->host, host,HOSTNAME_LEN);
+	}
 
 	return 0;
 }
 
 
-int sock_close(socket_t *my_socket)
+int sock_close(socket_t *sock)
 {
+	if( !sock)
+		return -1;
 
-	if( my_socket->conn_fd > 0)
+	if( sock->conn_fd > 0)
 	{
-		close(my_socket->conn_fd);
-		my_socket->conn_fd = -1;
+		close(sock->conn_fd);
+		sock->conn_fd = -1;
 
 	}
 	return 0;
 }
 
 
-
-
-
-
-int sock_connect(socket_t *my_socket)
+int sock_connect(socket_t *sock)
 {
 	int						rv = 0;
 	int						sockfd = 0;
@@ -72,20 +77,22 @@ int sock_connect(socket_t *my_socket)
 	int						len = sizeof(serv_addr);
 	struct in_addr      	inaddr;
 
+	if( !sock )
+		return -1;
 
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_INET;
 	hints.ai_protocol = IPPROTO_TCP;
 
-	if( inet_aton(my_socket->host, &inaddr) )
+	if( inet_aton(sock->host, &inaddr) )
 	{
 		hints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	snprintf(service, sizeof(service), "%d", my_socket->cli_port);
-	if( (rv = getaddrinfo(my_socket->host, service, &hints, &res)) )
+	snprintf(service, sizeof(service), "%d", sock->port);
+	if( (rv = getaddrinfo(sock->host, service, &hints, &res)) )
 	{
-		log_error("getaddrinfo() parser [%s:%s] failed:%s\n",my_socket->host, service, gai_strerror(rv));
+		log_error("getaddrinfo() parser [%s:%s] failed:%s\n",sock->host, service, gai_strerror(rv));
 		return -3;
 	}
 
@@ -104,8 +111,8 @@ int sock_connect(socket_t *my_socket)
 
 		if( 0 == rv )
 		{
-			my_socket->conn_fd = sockfd;
-			log_info("connect to  server [%s:%d] successfully\n", my_socket->host, my_socket->cli_port);
+			sock->conn_fd = sockfd;
+			log_info("connect to  server [%s:%d] successfully\n", sock->host, sock->port);
 			break;
 		}
 
@@ -122,25 +129,23 @@ int sock_connect(socket_t *my_socket)
 }
 
 
-
-
-int sock_write(socket_t *my_socket,data_t data, char *d_data, int bytes)
+int sock_write(socket_t *sock, char *d_data, int bytes)
 {
 	int			rv = 0;
 	int			i = 0;
 	int			left_bytes = bytes;
-	if( !my_socket || bytes<=0 || !d_data )
+	if( !sock || bytes<=0 || !d_data )
 		return -1;
 
 
 	while( left_bytes > 0 )
 	{
-		rv = write(my_socket->conn_fd, &d_data[i], left_bytes);
+		rv = write(sock->conn_fd, &d_data[i], left_bytes);
 
 		if( rv < 0 )
 		{
 			log_info("Socket write failure : %s\n", strerror(errno));
-			sock_close(my_socket);
+			sock_close(sock);
 			return -2;
 		}
 

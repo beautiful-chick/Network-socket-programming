@@ -44,36 +44,50 @@ int get_name(char *nameid, int size, int sn)
 }
 
 
-
-
-
-int get_time(char *now_time) 
+int get_time(struct tm *ptm)
 {
-	time_t			timer;
-	struct tm		*Now = NULL;
+	time_t		now;
 
-	time( &timer );
-	Now = localtime( &timer );
-
-
-	if( Now == NULL)
+	if( !ptm )
 	{
-		log_error("localtime() Error: %s\n",strerror(errno));
+		log_error("Invalid input arguments\n");
 		return -1;
 	}
-	snprintf(now_time, 64, asctime(Now));
 
-	if(now_time == NULL)
-	{
-		log_error("asctime() Error : %s\n",strerror(errno));
-		return -2;
-	}
-	log_info("In the get time now_time:%s\n",now_time);
-	
+	now = time(NULL);
+	localtime_r(&now, ptm);
+
 	return 0;
+
 }
 
 
+/*int get_time(char *now_time) 
+  {
+  time_t			timer;
+  struct tm		*Now = NULL;
+  time( &timer );
+  Now = localtime( &timer );
+
+
+  if( Now == NULL)
+  {
+  log_error("localtime() Error: %s\n",strerror(errno));
+  return -1;
+  }
+  snprintf(now_time, 64, asctime(Now));
+
+  if(now_time == NULL)
+  {
+  log_error("asctime() Error : %s\n",strerror(errno));
+  return -2;
+  }
+  log_info("In the get time now_time:%s\n",now_time);
+
+  return 0;
+  }
+
+*/
 
 
 
@@ -97,19 +111,26 @@ int get_devid(char *devid, int size, int sn)
 
 int packet_data(data_t *data, uint8_t *pack_buf, int size)
 {
+	char              	strtime[128] = {'\0'};
 	char				*buf = (char *)pack_buf;
-	
+	struct tm        	*ptm;
+
 	if( !data || !buf ||size <= 0 )
 	{
 		log_error("Invalid input arguments\n");
 		return -1;
 	}
 
-	memset(buf, 0, size);
-	snprintf(buf, size, "%s,%s,%.2f", data->d_name, data->d_time, data->d_temp);
-
-	return strlen(buf);
+	ptm = &data->time_str;
+	snprintf(strtime, sizeof(strtime), "%04d-%02d-%02d %02d:%02d:%02d",
+			ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday,
+			ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
 	
+	memset(buf, 0, size);
+	snprintf(buf, size, "%s,%s,%.2f", data->d_name, strtime, data->d_temp);
+	strcpy(strtime, data->d_time);
+	return strlen(buf);
+
 }
 
 

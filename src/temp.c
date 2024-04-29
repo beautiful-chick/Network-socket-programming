@@ -70,6 +70,7 @@ float get_temperature(float *temp)
 	if( fd < 0 )
 	{
 		log_error("Open the file failure : %s\n",strerror(errno));
+		close(fd);
 		return -1;
 	}
 	memset(buf, 0, sizeof(buf));
@@ -78,6 +79,7 @@ float get_temperature(float *temp)
 	if(read(fd, buf, sizeof(buf)) < 0 )
 	{
 		log_error("Read data from fd = %d failure : %s\n",fd,strerror(errno));
+		close(fd);
 		return -2;
 	}
 	ptr = strstr(buf, "t=");
@@ -87,6 +89,7 @@ float get_temperature(float *temp)
 	if( NULL == ptr )
 	{
 		log_error("Can not find t = String\n");
+		close(fd);
 		return -1;
 	}
 	ptr += 2;

@@ -143,7 +143,7 @@ int sqlite_read_data(void)
 
 
 
-int sqlite_del_data(char *snd_buf)
+int sqlite_del_data(void)
 {
 
 	struct tcp_info				optval;
