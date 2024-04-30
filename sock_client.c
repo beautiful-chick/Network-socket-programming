@@ -9,7 +9,7 @@
  *         Author:  LiZhao <3299832490@qq.com>
  *      ChangeLog:  1, Release initial version on "17/04/24 20:39:19"
  *                 
-********************************************************************************/
+ ********************************************************************************/
 #include<stdio.h>
 #include<sys/types.h>
 #include<sys/stat.h>
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 	int					flag;
 	double				time_diff;
 	time_t				last_time = 0;
-	
+
 
 	socket_t 			sock;
 	struct tcp_info		optval;
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 	char     	        snd_buf[1024] = {0};
 	char				*send_buf;
 	int					ret;
-
+	int					daemon_run = 0;
 
 	int					row;
 	data_t				data;
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 	char                *logfile="sock_client.log";
 	int                 loglevel=LOG_LEVEL_INFO;
 	int                 logsize=10; /*  logfile size max to 10K */ 
-	
+
 
 	progname = (char *)basename(argv[0]);
 	struct option long_options[] = 
@@ -122,36 +122,40 @@ int main(int argc, char **argv)
 		{"timeout", required_argument, NULL, 't'},
 		{"help", no_argument, NULL, 'h'},
 		{"debug", no_argument, NULL, 'd'},
+		{"daemon_run", no_argument, NULL, 'b'},
 		{NULL, 0, NULL, 0}
 
 	};
 
 
-	while( (opt = getopt_long(argc,argv,"p:i:t:dh",long_options,NULL)) != -1 )
+	while( (opt = getopt_long(argc,argv,"p:i:t:dhb",long_options,NULL)) != -1 )
 	{
 		switch(opt)
 		{
 			case 'p':
 				port = atoi(optarg);
 				break;
-			
+
 			case 'i':
 				serverip = optarg;
 				break;
-			
+
 			case 't':
 				timeout = atoi(optarg);
 				break;
-			
+
+			case 'b':
+				daemon_run = 1;
+				break;
 			case 'd':
 				logfile="console";/* set log_name:console*/
 				loglevel=LOG_LEVEL_DEBUG;/*set level is record all debug information*/
 				break;
-			
+
 			case 'h':
 				print_usage(progname);
 				return 0;
-			
+
 			default:
 				break;
 		}
@@ -165,8 +169,13 @@ int main(int argc, char **argv)
 	}
 
 	install_default_signal();	
-	
-	rv = open_sqlite3();
+
+	if( daemon_run )
+	{
+		daemon(1, 0);
+	}
+
+	rv = open_sqlite3("dev_database.db");
 	if( 0 == rv )
 	{
 		log_debug("Create table ok\n");
@@ -176,7 +185,7 @@ int main(int argc, char **argv)
 		log_error("Create table error:%s\n",strerror(errno));
 		return 2;
 	}
-	
+
 	socket_init(&sock, serverip, port);
 
 	while( ! g_signal.stop )
@@ -221,13 +230,13 @@ int main(int argc, char **argv)
 
 			flag = 1;
 		}
-		
+
 
 		if(sock.conn_fd < 0 )
 		{
 			sock_connect(&sock);
 		}
-		
+
 		ret = getsockopt(sock.conn_fd, IPPROTO_TCP, TCP_INFO, &optval, &optlen);
 		if( ret != 0 )
 		{
@@ -277,7 +286,7 @@ int main(int argc, char **argv)
 				log_error("Error:%s\n", strerror(errno));
 				continue;
 			}
-			
+
 			rv = sock_write(&sock, pack_buf, pack_bytes);
 			if( rv < 0 )
 			{
@@ -286,7 +295,7 @@ int main(int argc, char **argv)
 				log_error("Send error\n");
 				continue;
 			}
-			
+
 			/* 删除一条数据*/
 			rv = sqlite_del_data();
 			if( rv < 0 )
