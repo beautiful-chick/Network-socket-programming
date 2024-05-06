@@ -85,7 +85,6 @@ int main(int argc, char **argv)
 	int					port = 0;
 
 	int					rv = -1;
-	int					rc;
 
 	float				temp;
 	char				name_buf[64];
