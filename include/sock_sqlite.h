@@ -16,7 +16,7 @@
 
 /* Description : create database.db and create table to store data */
 
-int open_sqlite3(void);
+int open_sqlite3( const char *db_file );
 
 /* Description : Inserting structure data into the database */
 
