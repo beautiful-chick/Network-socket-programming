@@ -62,35 +62,6 @@ int get_time(struct tm *ptm)
 }
 
 
-/*int get_time(char *now_time) 
-  {
-  time_t			timer;
-  struct tm		*Now = NULL;
-  time( &timer );
-  Now = localtime( &timer );
-
-
-  if( Now == NULL)
-  {
-  log_error("localtime() Error: %s\n",strerror(errno));
-  return -1;
-  }
-  snprintf(now_time, 64, asctime(Now));
-
-  if(now_time == NULL)
-  {
-  log_error("asctime() Error : %s\n",strerror(errno));
-  return -2;
-  }
-  log_info("In the get time now_time:%s\n",now_time);
-
-  return 0;
-  }
-
-*/
-
-
-
 int get_devid(char *devid, int size, int sn)
 {
 	if( !devid || size<DEVID_LEN )

@@ -33,14 +33,14 @@
 
 static sqlite3			 *db = NULL;
 
-int open_sqlite3(void)
+
+int open_sqlite3( const char *db_file )
 {
 	int 		rc;
 	char 		*err_msg = 0;
 	char		*sql = 0;
 
-
-	rc = sqlite3_open("dev_database.db", &db);
+	rc = sqlite3_open(db_file, &db);
 	log_debug("db pointer(in the dev_sqlite3): %p\n", (void *)db);
 
 	if( rc != SQLITE_OK)
@@ -71,7 +71,6 @@ int open_sqlite3(void)
 }
 
 
-
 int sqlite_insert_data(data_t data)
 {
 	char			sql[256];
@@ -96,8 +95,6 @@ int sqlite_insert_data(data_t data)
 
 	return 0;
 }
-
-
 
 
 int sqlite_read_data(void)
@@ -138,11 +135,6 @@ int sqlite_read_data(void)
 }
 
 
-
-
-
-
-
 int sqlite_del_data(void)
 {
 
@@ -172,7 +164,6 @@ int sqlite_del_data(void)
 
 	return 0;
 }
-
 
 
 int sqlite_get_row(void)

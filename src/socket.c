@@ -15,24 +15,23 @@
 #include<sys/stat.h>
 #include<fcntl.h>
 #include<string.h>
-#include <stdlib.h>
-#include <errno.h>
+#include<stdlib.h>
+#include<errno.h>
 #include<sys/types.h>
 #include<sys/socket.h>
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<netinet/in.h>
 #include<netinet/tcp.h>
-#include <unistd.h>
+#include<unistd.h>
 #include<sqlite3.h>
-#include <netdb.h>
+#include<netdb.h>
 
 
 #include"temp.h"
 #include"socket.h"
 #include"sock_sqlite.h"
 #include"logger.h"
-
 
 
 int socket_init(socket_t *sock, char *host, int port)
@@ -53,7 +52,7 @@ int socket_init(socket_t *sock, char *host, int port)
 
 int sock_close(socket_t *sock)
 {
-	if( !sock)
+	if( !sock )
 		return -1;
 
 	if( sock->conn_fd > 0)
@@ -166,10 +165,4 @@ int sock_write(socket_t *sock, char *d_data, int bytes)
 	}
 	return 0;
 }
-
-
-
-
-
-
 

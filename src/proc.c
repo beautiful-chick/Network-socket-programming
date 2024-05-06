@@ -61,7 +61,6 @@ void proc_default_sighandler(int sig)
 }
 
 
-
 void install_default_signal(void)
 {
 	struct sigaction sigact,sigign;

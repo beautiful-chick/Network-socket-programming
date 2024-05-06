@@ -22,9 +22,12 @@
 #include <sys/time.h>
 #include <pthread.h>
 
+
 #include "logger.h"
 
+
 typedef void (*log_LockFn)(void *udata, int lock);
+
 
 static struct {
     char        file[32]; /* logger file name */
