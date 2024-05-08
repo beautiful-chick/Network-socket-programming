@@ -24,7 +24,7 @@ int sqlite_insert_data(data_t data);
 
 /* Description : read data from database*/
 
-int sqlite_read_data(void);
+int sqlite_read_data(data_t data);
 
 /* Description :  delete the data sent to database*/
 
