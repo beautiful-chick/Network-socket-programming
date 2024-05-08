@@ -97,10 +97,10 @@ int sqlite_insert_data(data_t data)
 }
 
 
-int sqlite_read_data(void)
+int sqlite_read_data(data_t data)
 
 {
-	data_t				data;
+	
 	int					rc;
 	static int			row_count; 
 	char				*errmsg;
