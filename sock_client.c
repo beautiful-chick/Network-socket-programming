@@ -275,7 +275,7 @@ int main(int argc, char **argv)
 		if(row != 0)
 		{
 			/* 提取,发送一条数据*/
-			rv = sqlite_read_data();
+			rv = sqlite_read_data(data);
 			if( 0 == rv )
 			{
 				log_info("Extract data ok\n");
@@ -286,6 +286,7 @@ int main(int argc, char **argv)
 				continue;
 			}
 
+			pack_bytes = packet_data(&data, pack_buf, sizeof(pack_buf));
 			rv = sock_write(&sock, pack_buf, pack_bytes);
 			if( rv < 0 )
 			{
