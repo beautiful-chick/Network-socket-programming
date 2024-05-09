@@ -1,0 +1,8 @@
+
+2024-05-09 10:16:23.687845  INFO  logger.c:125: logger system(v0.1) start: file:"sock_client.log", level:INFO, maxsize:10KiB
+
+2024-05-09 10:16:23.877564  INFO  proc.c:069: Start to install signal
+2024-05-09 10:16:26.098226  INFO  sock_client.c:199: Temperature:25.94
+2024-05-09 10:16:26.141499  INFO  sock_client.c:213: name:rpi#0088
+2024-05-09 10:16:26.144829  INFO  sock_client.c:219: Current time is:
+2024-05-09 10:16:26.294255  INFO  sock_sqlite.c:093: Record inserted successfully
