@@ -99,7 +99,7 @@ int packet_data(data_t *data, uint8_t *pack_buf, int size)
 	
 	memset(buf, 0, size);
 	snprintf(buf, size, "%s,%s,%.2f", data->d_name, strtime, data->d_temp);
-	strcpy(strtime, data->d_time);
+	strcpy(data->d_time, strtime);
 	return strlen(buf);
 
 }
